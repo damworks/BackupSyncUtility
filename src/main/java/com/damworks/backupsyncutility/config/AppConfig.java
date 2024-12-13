@@ -29,6 +29,11 @@ public class AppConfig {
         return ConfigLoader.getOrDefault("backup.local.path", "./backup");
     }
 
+    public static int getRemoteFileRetentionCount() {
+        String value = ConfigLoader.get("backup.file.retention.count");
+        return Integer.parseInt(value);
+    }
+
     // FTP configuration
     public static String getFTPServer() {
         return ConfigLoader.get("ftp.server");
