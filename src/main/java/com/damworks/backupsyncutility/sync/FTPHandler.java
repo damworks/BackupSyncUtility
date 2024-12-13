@@ -45,6 +45,9 @@ public class FTPHandler {
      */
     public void upload(String localFilePath, String remoteFilePath) throws IOException {
         FTPClient ftpClient = new FTPClient();
+        String remoteDirectory = remoteFilePath.substring(0, remoteFilePath.lastIndexOf('/'));
+
+        ensureDirectoryExists(remoteDirectory);
 
         try {
             logger.info("Connecting to FTP server: {}:{}", server, port);
@@ -57,7 +60,9 @@ public class FTPHandler {
 
             logger.info("Starting upload of file: {}", localFilePath);
             try (InputStream inputStream = new FileInputStream(localFilePath)) {
+                logger.info("Starting upload of file: {} to {}", localFilePath, remoteFilePath);
                 boolean success = ftpClient.storeFile(remoteFilePath, inputStream);
+
                 if (success) {
                     logger.info("File uploaded successfully to {}", remoteFilePath);
                 } else {
@@ -77,6 +82,44 @@ public class FTPHandler {
                 }
             }
         }
+    }
+
+    /**
+     * Ensures the given directory exists on the FTP server.
+     *
+     * @param remotePath The directory path to check or create.
+     * @throws IOException If an error occurs.
+     */
+    private void ensureDirectoryExists(String remotePath) throws IOException {
+        String[] pathElements = remotePath.split("/");
+        String currentPath = "";
+
+        for (String folder : pathElements) {
+            if (folder.isEmpty()) continue; // Skip empty elements
+            currentPath += "/" + folder;
+            if (!ftpClient.changeWorkingDirectory(currentPath)) {
+                if (ftpClient.makeDirectory(currentPath)) {
+                    logger.info("Created remote directory: {}", currentPath);
+                } else {
+                    throw new IOException("Failed to create directory: " + currentPath);
+                }
+            }
+        }
+    }
+
+    /**
+     * Lists directories in a remote path.
+     *
+     * @param remotePath The remote path to search for directories.
+     * @return Array of directory names.
+     * @throws IOException If an error occurs.
+     */
+    public String[] listDirectories(String remotePath) throws IOException {
+        FTPFile[] files = ftpClient.listFiles(remotePath);
+        return Arrays.stream(files)
+                .filter(FTPFile::isDirectory)
+                .map(FTPFile::getName)
+                .toArray(String[]::new);
     }
 
     /**

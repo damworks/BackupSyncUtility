@@ -4,6 +4,7 @@ import com.damworks.backupsyncutility.config.AppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -40,10 +41,17 @@ public class SyncManager {
                 AppConfig.getFTPPassword()
         );
 
-        for (String file : dumpFiles) {
-            String remotePath = AppConfig.getFTPRemotePath() + "/" + file.substring(file.lastIndexOf("/") + 1);
-            ftpHandler.upload(file, remotePath);
-            logger.info("Uploaded file to FTP: {}", remotePath);
+        for (String dumpFile : dumpFiles) {
+            File file = new File(dumpFile);
+
+            String database = file.getParentFile().getName();
+            String remotePath = AppConfig.getFTPRemotePath() + "/" + database;
+            String remoteFilePath = remotePath + "/" + file.getName();
+
+            ftpHandler.upload(dumpFile, remoteFilePath);
+            logger.info("File synchronized to FTP: {}", remoteFilePath);
         }
+
+        ftpHandler.close();
     }
 }

@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Manages the database backup and its transfers
@@ -18,7 +20,7 @@ public class BackupManager {
     private static final Logger logger = LoggerFactory.getLogger(BackupManager.class);
 
     /**
-     * Executes the dump process for all configured databases.
+     * Executes the database dump process and returns the list of generated dump files.
      *
      * @return Array of file paths for the generated dump files.
      * @throws IOException          If there is an issue with directory creation or dump process.
@@ -27,29 +29,33 @@ public class BackupManager {
     public static String[] executeDump() throws IOException, InterruptedException {
         String[] databases = AppConfig.getDatabases();
         String localBackupPath = AppConfig.getLocalBackupPath();
+        List<String> dumpFiles = new ArrayList<>();
 
-        // Ensure the backup directory exists
-        createBackupDirectory(localBackupPath);
-
-        String[] dumpFiles = new String[databases.length];
-
-        for (int i = 0; i < databases.length; i++) {
-            String database = databases[i];
+        for (String database : databases) {
             logger.info("Starting dump for database: {}", database);
 
-            dumpFiles[i] = DatabaseDumper.dump(
+            // Ensure the database directory exists
+            String databasePath = localBackupPath + File.separator + database;
+            File databaseDir = new File(databasePath);
+            if (!databaseDir.exists() && !databaseDir.mkdirs()) {
+                throw new IOException("Failed to create directory for database: " + database);
+            }
+
+            // Execute the dump
+            String dumpFile = DatabaseDumper.dump(
                     AppConfig.getDatabaseHost(),
                     AppConfig.getDatabasePort(),
                     AppConfig.getDatabaseUser(),
                     AppConfig.getDatabasePassword(),
                     database,
-                    localBackupPath
+                    databasePath
             );
 
-            logger.info("Database dump completed for: {}", database);
+            logger.info("Dump completed for database: {}", database);
+            dumpFiles.add(dumpFile);
         }
 
-        return dumpFiles;
+        return dumpFiles.toArray(new String[0]);
     }
 
     /**
