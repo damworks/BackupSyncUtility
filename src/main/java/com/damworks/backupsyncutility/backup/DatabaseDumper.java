@@ -39,7 +39,7 @@ public class DatabaseDumper {
 
         // Build the mysqldump command
         String command = String.format(
-                "mysqldump -h%s -P%s -u%s -p%s %s -r %s",
+                "mysqldump -h%s -P%d -u%s -p%s %s -r %s",
                 host, port, user, password, database, dumpFilePath
         );
 
