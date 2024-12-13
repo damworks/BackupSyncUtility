@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'com.damworks.backupsyncutility'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    google()
+}
+
+dependencies {
+
+    // SLF4J for logging
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    implementation 'ch.qos.logback:logback-classic:1.4.11'
+
+    // JUnit for testing (optional)
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+
+    // Apache Commons IO for file utilities (optional but helpful)
+    implementation 'commons-io:commons-io:2.11.0'
+
+    // Apache Commons Net for FTP
+    implementation 'commons-net:commons-net:3.9.0'
+
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+
