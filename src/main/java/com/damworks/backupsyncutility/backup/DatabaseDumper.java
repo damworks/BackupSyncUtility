@@ -27,8 +27,9 @@ public class DatabaseDumper {
      * @throws IOException          If an I/O error occurs.
      * @throws InterruptedException If the process is interrupted.
      */
-    public static String dump(String host, String port, String user, String password, String database, String backupPath)
+    public static String dump(String host, int port, String user, String password, String database, String backupPath)
             throws IOException, InterruptedException {
+
         // Generate a timestamped filename
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String dumpFileName = String.format("%s_%s.sql", database, timestamp);

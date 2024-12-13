@@ -16,8 +16,9 @@ public class AppConfig {
         return ConfigLoader.getOrDefault("mysql.host", "localhost");
     }
 
-    public static String getDatabasePort() {
-        return ConfigLoader.getOrDefault("mysql.port", "3306");
+    public static int getDatabasePort() {
+        String port = ConfigLoader.get("mysql.port");
+        return port != null ? Integer.parseInt(port) : 3306;
     }
 
     public static String[] getDatabases() {
