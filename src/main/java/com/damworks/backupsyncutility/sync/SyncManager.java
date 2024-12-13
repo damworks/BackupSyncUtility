@@ -20,7 +20,7 @@ public class SyncManager {
     public static void syncFiles(String[] dumpFiles) {
         try {
             syncFTP(dumpFiles);
-            // Future: Add syncViaGoogleDrive(dumpFiles);
+            // toDo: Add syncViaGoogleDrive(dumpFiles);
         } catch (IOException e) {
             logger.error("Failed to synchronize files: {}", e.getMessage());
         }
