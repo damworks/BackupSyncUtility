@@ -3,6 +3,7 @@ package com.damworks.backupsyncutility.backup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -33,7 +34,7 @@ public class DatabaseDumper {
         // Generate a timestamped filename
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String dumpFileName = String.format("%s_%s.sql", database, timestamp);
-        String dumpFilePath = backupPath + "/" + dumpFileName;
+        String dumpFilePath = backupPath + File.separator + dumpFileName;
 
         logger.info("Creating database dump for '{}@{}:{}' in file: {}", database, host, port, dumpFilePath);
 
