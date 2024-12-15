@@ -1,7 +1,9 @@
 package com.damworks.backupsyncutility.rotate;
 
+import com.damworks.backupsyncutility.auth.GoogleDriveAuth;
 import com.damworks.backupsyncutility.config.AppConfig;
 import com.damworks.backupsyncutility.sync.FTPHandler;
+import com.damworks.backupsyncutility.sync.GoogleDriveHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,9 +30,8 @@ public class RotateManager {
         // Step 2: Propagate rotation to FTP
         rotateFTP(filesToKeep);
 
-        // toDo Placeholder for future protocols (e.g., Google Drive)
-        // Step 3: Placeholder for future protocols (e.g., Google Drive)
-        // rotateGDrive(filesToKeep);
+        // Step 3: Propagate rotation to Google Drive
+        rotateGoogleDrive(filesToKeep);
     }
 
     /**
@@ -126,6 +128,40 @@ public class RotateManager {
             logger.info("FTP rotation completed.");
         } catch (IOException e) {
             logger.error("Error during FTP rotation: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Rotates backup files on Google Drive, keeping only the files specified.
+     *
+     * @param filesToKeepMap A map where the key is the database name, and the value is an array of file names to keep.
+     */
+    private static void rotateGoogleDrive(Map<String, String[]> filesToKeepMap) {
+        try {
+            GoogleDriveHandler driveHandler = new GoogleDriveHandler(GoogleDriveAuth.getDriveService(AppConfig.getGoogleDriveCredentialsPath()));
+            String baseFolderId = AppConfig.getGoogleDriveFolderId();
+
+            for (Map.Entry<String, String[]> entry : filesToKeepMap.entrySet()) {
+                String databaseName = entry.getKey();
+                String[] filesToKeep = entry.getValue();
+
+                // Find or create the folder for this database
+                String folderId = driveHandler.getOrCreateFolder(databaseName, baseFolderId);
+
+                // List files in the Google Drive folder
+                List<com.google.api.services.drive.model.File> remoteFiles = driveHandler.listFiles(folderId);
+
+                for (com.google.api.services.drive.model.File remoteFile : remoteFiles) {
+                    if (!Arrays.asList(filesToKeep).contains(remoteFile.getName())) {
+                        driveHandler.deleteFile(remoteFile.getId());
+                        logger.info("Deleted old file from Google Drive: {}/{}", databaseName, remoteFile.getName());
+                    }
+                }
+            }
+
+            logger.info("Google Drive rotation completed.");
+        } catch (Exception e) {
+            logger.error("Error during Google Drive rotation: {}", e.getMessage());
         }
     }
 }

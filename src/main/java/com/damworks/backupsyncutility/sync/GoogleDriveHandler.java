@@ -58,7 +58,7 @@ public class GoogleDriveHandler {
      * @return ID of the folder.
      * @throws IOException If an error occurs.
      */
-    private String getOrCreateFolder(String folderName, String parentFolderId) throws IOException {
+    public String getOrCreateFolder(String folderName, String parentFolderId) throws IOException {
         String folderId = findFolder(folderName, parentFolderId);
         if (folderId != null) {
             return folderId;
