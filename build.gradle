@@ -13,6 +13,11 @@ repositories {
 
 dependencies {
 
+    // Google API Client Library for Drive
+    implementation 'com.google.api-client:google-api-client:1.34.1'
+    implementation 'com.google.apis:google-api-services-drive:v3-rev136-1.25.0'
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.19.0'
+
     // SLF4J for logging
     implementation 'org.slf4j:slf4j-api:2.0.9'
     implementation 'ch.qos.logback:logback-classic:1.4.11'
