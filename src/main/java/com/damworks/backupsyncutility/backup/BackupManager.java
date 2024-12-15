@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Manages the database backup and its transfers
- */
-/**
  * Manages the database dump process and ensures the backup directory exists.
  */
 public class BackupManager {
