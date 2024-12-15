@@ -1,11 +1,11 @@
 package com.damworks.backupsyncutility.auth;
 
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 
@@ -37,9 +37,10 @@ public class GoogleDriveAuth {
      * @throws GeneralSecurityException If the credentials are invalid.
      */
     public static Drive getDriveService(String credentialsPath) throws IOException, GeneralSecurityException {
-        Credential credential = getCredentials(credentialsPath);
+        // Load service account credentials
+        ServiceAccountCredentials credentials = getCredentials(credentialsPath);
 
-        return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
+        return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, new com.google.auth.http.HttpCredentialsAdapter(credentials))
                 .setApplicationName("BackupSyncUtility")
                 .build();
     }
@@ -48,13 +49,18 @@ public class GoogleDriveAuth {
      * Loads the service account credentials from the given file path.
      *
      * @param credentialsPath Path to the service account credentials JSON file.
-     * @return A Google Credential instance.
+     * @return A ServiceAccountCredentials instance.
      * @throws IOException If the credentials file cannot be read.
      */
-    private static Credential getCredentials(String credentialsPath) throws IOException {
+    private static ServiceAccountCredentials getCredentials(String credentialsPath) throws IOException {
         try (FileInputStream credentialsStream = new FileInputStream(credentialsPath)) {
-            return GoogleCredential.fromStream(credentialsStream)
+            GoogleCredentials credentials = GoogleCredentials.fromStream(credentialsStream)
                     .createScoped(DriveScopes.all());
+            if (credentials instanceof ServiceAccountCredentials) {
+                return (ServiceAccountCredentials) credentials;
+            } else {
+                throw new IOException("Provided credentials are not a service account.");
+            }
         }
     }
 }
