@@ -67,6 +67,6 @@ public class AppConfig {
     }
 
     public static String getGoogleDriveFolderId() {
-        return ConfigLoader.get("googleDriveFolderId");
+        return ConfigLoader.get("google.drive.folder.id");
     }
 }
