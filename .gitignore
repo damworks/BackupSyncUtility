@@ -47,3 +47,4 @@ bin/
 *.log
 /target/
 config.properties
+gdrive-service.json

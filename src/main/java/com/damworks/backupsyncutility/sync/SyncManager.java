@@ -1,5 +1,6 @@
 package com.damworks.backupsyncutility.sync;
 
+import com.damworks.backupsyncutility.auth.GoogleDriveAuth;
 import com.damworks.backupsyncutility.config.AppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ public class SyncManager {
     public static void syncFiles(String[] dumpFiles) {
         try {
             syncFTP(dumpFiles);
-            // toDo: Add syncViaGoogleDrive(dumpFiles);
+            syncGoogleDrive(dumpFiles);
         } catch (IOException e) {
             logger.error("Failed to synchronize files: {}", e.getMessage());
         }
@@ -53,5 +54,26 @@ public class SyncManager {
         }
 
         ftpHandler.close();
+    }
+
+    /**
+     * Synchronizes files via Google Drive.
+     *
+     * @param dumpFiles Array of file paths.
+     */
+    private static void syncGoogleDrive(String[] dumpFiles) {
+        try {
+            String credentialsPath = AppConfig.getGoogleDriveCredentialsPath();
+            String parentFolderId = AppConfig.getGoogleDriveFolderId();
+
+            GoogleDriveHandler driveHandler = new GoogleDriveHandler(GoogleDriveAuth.getDriveService(credentialsPath));
+
+            for (String dumpFile : dumpFiles) {
+                driveHandler.uploadFile(dumpFile, parentFolderId);
+                logger.info("File synchronized to Google Drive: {}", dumpFile);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to synchronize files to Google Drive: {}", e.getMessage());
+        }
     }
 }

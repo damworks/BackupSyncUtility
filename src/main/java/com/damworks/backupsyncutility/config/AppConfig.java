@@ -55,4 +55,16 @@ public class AppConfig {
     public static String getFTPRemotePath() {
         return ConfigLoader.get("ftp.remotePath");
     }
+
+    public static String getGoogleDriveCredentialsPath() {
+        String fileName = ConfigLoader.get("googleDriveCredentialsPath"); // Legge solo il nome del file
+        if (fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("googleDriveCredentialsFile is not configured.");
+        }
+        return AppConfig.class.getClassLoader().getResource(fileName).getPath();
+    }
+
+    public static String getGoogleDriveFolderId() {
+        return ConfigLoader.get("googleDriveFolderId");
+    }
 }
