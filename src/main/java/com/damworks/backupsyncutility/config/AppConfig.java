@@ -1,5 +1,7 @@
 package com.damworks.backupsyncutility.config;
 
+import java.util.Objects;
+
 /**
  * Provides application-level configuration.
  */
@@ -56,12 +58,12 @@ public class AppConfig {
         return ConfigLoader.get("ftp.remotePath");
     }
 
-    public static String getGoogleDriveCredentialsPath() {
-        String fileName = ConfigLoader.get("googleDriveCredentialsPath"); // Legge solo il nome del file
+    public static String getGoogleDriveCredentialsFile() {
+        String fileName = ConfigLoader.get("google.service.account.key");
         if (fileName == null || fileName.isEmpty()) {
             throw new IllegalArgumentException("googleDriveCredentialsFile is not configured.");
         }
-        return AppConfig.class.getClassLoader().getResource(fileName).getPath();
+        return Objects.requireNonNull(AppConfig.class.getClassLoader().getResource(fileName)).getFile();
     }
 
     public static String getGoogleDriveFolderId() {

@@ -138,7 +138,7 @@ public class RotateManager {
      */
     private static void rotateGoogleDrive(Map<String, String[]> filesToKeepMap) {
         try {
-            GoogleDriveHandler driveHandler = new GoogleDriveHandler(GoogleDriveAuth.getDriveService(AppConfig.getGoogleDriveCredentialsPath()));
+            GoogleDriveHandler driveHandler = new GoogleDriveHandler(GoogleDriveAuth.getDriveService(AppConfig.getGoogleDriveCredentialsFile()));
             String baseFolderId = AppConfig.getGoogleDriveFolderId();
 
             for (Map.Entry<String, String[]> entry : filesToKeepMap.entrySet()) {
