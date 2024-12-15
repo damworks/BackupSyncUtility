@@ -18,7 +18,7 @@ import java.security.GeneralSecurityException;
  */
 public class GoogleDriveAuth {
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-    private static HttpTransport HTTP_TRANSPORT;
+    private static final HttpTransport HTTP_TRANSPORT;
 
     static {
         try {
