@@ -63,10 +63,10 @@ public class SyncManager {
      */
     private static void syncGoogleDrive(String[] dumpFiles) {
         try {
-            String credentialsPath = AppConfig.getGoogleDriveCredentialsFile();
+            String credentialsFile = AppConfig.getGoogleDriveCredentialsFile();
             String parentFolderId = AppConfig.getGoogleDriveFolderId();
 
-            GoogleDriveHandler driveHandler = new GoogleDriveHandler(GoogleDriveAuth.getDriveService(credentialsPath));
+            GoogleDriveHandler driveHandler = new GoogleDriveHandler(GoogleDriveAuth.getDriveService(credentialsFile));
 
             for (String dumpFile : dumpFiles) {
                 driveHandler.uploadFile(dumpFile, parentFolderId);
