@@ -1,7 +1,18 @@
+# BackupSyncUtility
+config.yaml
+credentials.json
+log/
+*.log
+*.sql
+*.sql.gz
+
+.idea/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
 *$py.class
+*.pyc
 
 # C extensions
 *.so
@@ -138,6 +149,7 @@ celerybeat.pid
 .env
 .envrc
 .venv
+.venv/
 env/
 venv/
 ENV/
